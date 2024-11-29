@@ -1,0 +1,78 @@
+CREATE TABLE products (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    description TEXT
+);
+
+CREATE TABLE inventory (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    stock_level INT NOT NULL DEFAULT 0,
+    FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
+
+CREATE TABLE customers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE, 
+    address TEXT, 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    total_amount DECIMAL(10, 2) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE
+);
+
+CREATE TABLE order_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity INT NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE cart (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity INT NOT NULL DEFAULT 1,
+    FOREIGN KEY (customer_id) REFERENCES customers(id),
+    FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
+
+ALTER TABLE products ADD CONSTRAINT unique_product_name UNIQUE (name);
+ALTER TABLE products
+MODIFY name VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL UNIQUE;
+ALTER TABLE products DROP INDEX name_2;
+ALTER TABLE products MODIFY price DECIMAL(10, 2) NOT NULL;
+
+SELECT * FROM CART;
+SELECT * FROM PRODUCTS;
+SELECT * FROM CUSTOMERS;
+SELECT * FROM INVENTORY;
+SELECT * FROM ORDERS;
+DESCRIBE inventory;
+
+SELECT o.id AS order_id, o.customer_id, c.name AS customer_name, 
+       o.total_amount, o.status, o.created_at, 
+       oi.product_id, oi.quantity, oi.price, p.name AS product_name
+FROM orders o
+JOIN customers c ON o.customer_id = c.id
+JOIN order_items oi ON o.id = oi.order_id
+JOIN products p ON oi.product_id = p.id
+WHERE o.customer_id = 4;
+
+ALTER TABLE inventory
+ADD CONSTRAINT fk_product_id FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE;
