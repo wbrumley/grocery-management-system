@@ -23,6 +23,13 @@ nav a {
   color: white;
   text-decoration: none;
   font-weight: bold;
+  padding: 0.5em 1em;
+  display: inline-block;
+}
+
+nav a:hover, nav a.active {
+  background-color: #0056b3;
+  border-radius: 5px;
 }
 
 main {
@@ -66,3 +73,9 @@ form input, form textarea {
 .order h3 {
   margin-top: 0;
 }
+
+.hidden {
+  display: none;
+}
+
+

@@ -419,94 +419,160 @@ async function deleteOrder(orderId) {
   }
 }
 
-// Product Form: Add Product
-document.getElementById('productForm').addEventListener('submit', async function(event) {
-  event.preventDefault();
-
-  const name = document.getElementById('productName').value;
-  const price = parseFloat(document.getElementById('productPrice').value); // Parse price as a float
-  const description = document.getElementById('productDescription').value;
-
-  if (isNaN(price) || price < 0) {
-    alert('Invalid price. Please enter a positive number.');
-    return;
-  }
-
-  const newProduct = { name, price, description };
-
+async function fetchCustomersForDropdown(dropdownElement) {
   try {
-    const response = await fetch('http://127.0.0.1:5000/api/products', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newProduct),
-    });
+    const response = await fetch(`${API_URL}/customers`);
+    const customers = await response.json();
 
-    if (!response.ok) {
-      const error = await response.json();
-      alert(`Error: ${error.error}`);
+    if (!Array.isArray(customers) || customers.length === 0) {
+      dropdownElement.innerHTML = '<option value="">No customers available</option>';
       return;
     }
 
-    console.log('Product added successfully');
-    fetchProducts(); // Refresh the product list
+    dropdownElement.innerHTML = customers.map(customer => `
+      <option value="${customer.id}">${customer.name} (ID: ${customer.id})</option>
+    `).join('');
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error fetching customers for dropdown:', error);
+    dropdownElement.innerHTML = '<option value="">Error loading customers</option>';
   }
-});
+}
+
+
+// Product Form: Add Product
+const productForm = document.getElementById('productForm');
+if (productForm) {
+  productForm.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    const name = document.getElementById('productName').value;
+    const price = parseFloat(document.getElementById('productPrice').value);
+    const description = document.getElementById('productDescription').value;
+
+    if (isNaN(price) || price < 0) {
+      alert('Invalid price. Please enter a positive number.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/products`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, price, description }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        alert(`Error: ${error.error}`);
+        return;
+      }
+
+      alert('Product added successfully');
+      fetchProducts(); // Refresh products after adding
+    } catch (error) {
+      console.error('Error adding product:', error);
+    }
+  });
+}
 
 // Customer Form: Add Customer
-document.getElementById('customerForm').addEventListener('submit', async function(event) {
-  event.preventDefault();
+const customerForm = document.getElementById('customerForm');
+  if (customerForm) {
+    customerForm.addEventListener('submit', async function (event) {
+      event.preventDefault();
+      const name = document.getElementById('customerName').value;
+      const email = document.getElementById('customerEmail').value;
+      const address = document.getElementById('customerAddress').value;
 
-  const name = document.getElementById('customerName').value;
-  const email = document.getElementById('customerEmail').value;
-  const address = document.getElementById('customerAddress').value;
+      try {
+        const response = await fetch(`${API_URL}/customers`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, address }),
+        });
 
-  try {
-    const response = await fetch('http://127.0.0.1:5000/api/customers', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, address }),
+        if (!response.ok) {
+          const error = await response.json();
+          alert(`Error: ${error.error}`);
+          return;
+        }
+
+        alert('Customer added successfully');
+        fetchCustomers(); // Refresh customers after adding
+      } catch (error) {
+        console.error('Error adding customer:', error);
+      }
     });
-
-    if (response.status === 409) {
-      const error = await response.json();
-      alert(error.error); // Show duplicate email error
-      return;
-    }
-
-    if (!response.ok) {
-      const error = await response.json();
-      alert(`Error: ${error.error}`);
-      return;
-    }
-
-    alert('Customer created successfully');
-  } catch (error) {
-    console.error('Error creating customer:', error);
   }
-});
 
-document.getElementById('customerId').addEventListener('change', function () {
-  const customerId = this.value;
-  console.log('Selected Customer ID:', customerId); // Debugging log
-  if (customerId) {
-    fetchCart(customerId);
-  } else {
-    document.getElementById('cart-list').innerHTML = '<p>Please select a customer to view their cart.</p>';
+  const customerIdDropdown = document.getElementById('customerId');
+  if (customerIdDropdown) {
+    fetchCustomersForDropdown(customerIdDropdown);
+
+    // Add a change listener to the dropdown
+    customerIdDropdown.addEventListener('change', function () {
+      const customerId = this.value;
+      console.log(`Selected Customer ID: ${customerId}`); // Debugging log
+
+      if (customerId) {
+        // Update sections that depend on the selected customer
+        fetchCart(customerId);
+        fetchOrdersForCustomer(customerId);
+      } else {
+        // Clear dependent sections if no customer is selected
+        document.getElementById('cart-list').innerHTML = '<p>Please select a customer to view their cart.</p>';
+        document.getElementById('order-list').innerHTML = '<p>Please select a customer to view their orders.</p>';
+      }
+    });
   }
-});
+// Function to show a specific section and hide others
+function showSection(sectionId) {
+  // Hide all sections
+  document.querySelectorAll('main > section').forEach(section => {
+    section.classList.add('hidden');
+  });
+
+  // Show the selected section
+  document.getElementById(sectionId).classList.remove('hidden');
+
+  // Trigger the appropriate fetch function based on the section
+  switch (sectionId) {
+    case 'products':
+      fetchProducts();
+      break;
+    case 'inventory':
+      fetchInventory();
+      break;
+    case 'cart':
+      updateCart();
+      break;
+    case 'orders':
+      fetchOrders();
+      break;
+    case 'customers':
+      fetchCustomers();
+      break;
+    default:
+      console.error(`Unknown section: ${sectionId}`);
+  }
+}
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
-  fetchProducts();
-  fetchInventory();
-  fetchCustomers();
-  const customerId = localStorage.getItem('customer_id');
-  if (!customerId) {
-    console.error('Customer ID is undefined. Please ensure the user is logged in.');
-    document.getElementById('cart-list').innerHTML = '<p>Please log in to view your cart.</p>';
-    return;
+  const customerIdDropdown = document.getElementById('customerId');
+  if (customerIdDropdown) {
+    fetchCustomersForDropdown(customerIdDropdown);
+
+    customerIdDropdown.addEventListener('change', function () {
+      const customerId = this.value;
+      console.log(`Selected Customer ID: ${customerId}`); // Debugging log
+
+      if (customerId) {
+        fetchCart(customerId); // Fetch the cart for the selected customer
+        fetchOrdersForCustomer(customerId); // Fetch orders for the selected customer
+      } else {
+        document.getElementById('cart-list').innerHTML = '<p>Please select a customer to view their cart.</p>';
+        document.getElementById('order-list').innerHTML = '<p>Please select a customer to view their orders.</p>';
+      }
+    });
   }
-  fetchCart(customerId);
 });

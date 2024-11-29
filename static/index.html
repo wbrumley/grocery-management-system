@@ -9,19 +9,16 @@
 <body>
   <header>
     <h1>Grocery Management System</h1>
+    <nav>
+      <a href="#products" onclick="showSection('products')">Products</a>
+      <a href="#inventory" onclick="showSection('inventory')">Inventory</a>
+      <a href="#cart" onclick="showSection('cart')">Cart</a>
+      <a href="#orders" onclick="showSection('orders')">Orders</a>
+      <a href="#customers" onclick="showSection('customers')">Customers</a>
+    </nav>
   </header>
-
-  <nav>
-    <a href="#customers" onclick="setActive(this); fetchCustomers()">Customers</a> 
-    <a href="#products" onclick="setActive(this); fetchProducts()">Products</a>
-    <a href="#inventory" onclick="setActive(this); fetchInventory()">Inventory</a>
-    <a href="#cart" onclick="setActive(this); updateCart()">Cart</a>
-    <a href="#orders" onclick="setActive(this); fetchOrders()">Orders</a>
-</nav>
-
-
   <main>
-
+    <!-- Customer Select Section -->
     <section id="customer-select">
       <h2>Select Customer</h2>
       <label for="customerId">Customer:</label>
@@ -30,22 +27,8 @@
       </select>
     </section>
 
-    <section id="customers">
-      <h2>Add Customer</h2>
-      <form id="customerForm">
-        <input type="text" id="customerName" placeholder="Name" required>
-        <input type="email" id="customerEmail" placeholder="Email" required>
-        <textarea id="customerAddress" placeholder="Address"></textarea>
-        <button type="submit">Add Customer</button>
-      </form>      
-    </section>
-
-    <section id="customer-management">
-      <h2>Manage Customers</h2>
-      <div id="customer-list"></div>
-    </section>
-
-    <section id="products">
+    <!-- Products Section -->
+    <section id="products" class="hidden">
       <h2>Products</h2>
       <div id="product-list"></div>
       <h3>Add Product</h3>
@@ -54,29 +37,41 @@
         <input type="number" id="productPrice" placeholder="Price" step="0.01" required>
         <textarea id="productDescription" placeholder="Description"></textarea>
         <button type="submit">Add Product</button>
-      </form>      
       </form>
     </section>
 
-    <section id="inventory">
+    <!-- Inventory Section -->
+    <section id="inventory" class="hidden">
       <h2>Inventory</h2>
       <div id="inventory-list"></div>
     </section>
-    
-    <section id="cart">
+
+    <!-- Cart Section -->
+    <section id="cart" class="hidden">
       <h2>Cart</h2>
       <div id="cart-list"></div>
-      <button id="create-order" onclick="createOrder()">Create Order</button>
     </section>
-    
-    <section id="orders">
+
+    <!-- Orders Section -->
+    <section id="orders" class="hidden">
       <h2>Orders</h2>
       <button onclick="fetchOrders()">View All Orders</button>
       <button onclick="fetchOrdersForCustomer()">View Selected Customer's Orders</button>
       <div id="order-list"></div>
     </section>
-      
-    
+
+    <!-- Customers Section -->
+    <section id="customers" class="hidden">
+      <h2>Add Customer</h2>
+      <form id="customerForm">
+        <input type="text" id="customerName" placeholder="Name" required>
+        <input type="email" id="customerEmail" placeholder="Email" required>
+        <textarea id="customerAddress" placeholder="Address"></textarea>
+        <button type="submit">Add Customer</button>
+      </form>
+      <h2>Manage Customers</h2>
+      <div id="customer-list"></div>
+    </section>
   </main>
 
   <script src="js/app.js"></script>
