@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grocery Management System</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header>
+    <h1>Grocery Management System</h1>
+  </header>
+
+  <nav>
+    <a href="#customers" onclick="setActive(this); fetchCustomers()">Customers</a> 
+    <a href="#products" onclick="setActive(this); fetchProducts()">Products</a>
+    <a href="#inventory" onclick="setActive(this); fetchInventory()">Inventory</a>
+    <a href="#cart" onclick="setActive(this); updateCart()">Cart</a>
+    <a href="#orders" onclick="setActive(this); fetchOrders()">Orders</a>
+</nav>
+
+
+  <main>
+
+    <section id="customer-select">
+      <h2>Select Customer</h2>
+      <label for="customerId">Customer:</label>
+      <select id="customerId">
+        <!-- Options will be dynamically populated -->
+      </select>
+    </section>
+
+    <section id="customers">
+      <h2>Add Customer</h2>
+      <form id="customerForm">
+        <input type="text" id="customerName" placeholder="Name" required>
+        <input type="email" id="customerEmail" placeholder="Email" required>
+        <textarea id="customerAddress" placeholder="Address"></textarea>
+        <button type="submit">Add Customer</button>
+      </form>      
+    </section>
+
+    <section id="customer-management">
+      <h2>Manage Customers</h2>
+      <div id="customer-list"></div>
+    </section>
+
+    <section id="products">
+      <h2>Products</h2>
+      <div id="product-list"></div>
+      <h3>Add Product</h3>
+      <form id="productForm">
+        <input type="text" id="productName" placeholder="Product Name" required>
+        <input type="number" id="productPrice" placeholder="Price" step="0.01" required>
+        <textarea id="productDescription" placeholder="Description"></textarea>
+        <button type="submit">Add Product</button>
+      </form>      
+      </form>
+    </section>
+
+    <section id="inventory">
+      <h2>Inventory</h2>
+      <div id="inventory-list"></div>
+    </section>
+    
+    <section id="cart">
+      <h2>Cart</h2>
+      <div id="cart-list"></div>
+      <button id="create-order" onclick="createOrder()">Create Order</button>
+    </section>
+    
+    <section id="orders">
+      <h2>Orders</h2>
+      <button onclick="fetchOrders()">View All Orders</button>
+      <button onclick="fetchOrdersForCustomer()">View Selected Customer's Orders</button>
+      <div id="order-list"></div>
+    </section>
+      
+    
+  </main>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

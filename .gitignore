@@ -1,0 +1,12 @@
+# Python virtual environment
+venv/
+
+# Python bytecode files
+__pycache__/
+*.pyc
+
+# Node.js modules (if applicable)
+node_modules/
+
+# Ignore environment variables
+.env
