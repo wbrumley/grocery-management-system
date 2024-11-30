@@ -11,8 +11,8 @@ def get_db_connection():
     return pymysql.connect(
         host="localhost",
         user="root",  # Replace with your MySQL username
-        password="Mazatlan1!",  # Replace with your MySQL password
-        database="test_db"  # Replace with your database name
+        password="",  # Replace with your MySQL password
+        database="grocery_db"  # Replace with your database name
     )
 
 # View all products
