@@ -6,9 +6,10 @@
 3. Clone and open project from GitHub repo:
  
 `git clone https://github.com/wbrumley/grocery-management-system.git`
- `cd grocery-management-system`
 
-4. Install Homebrew:
+`cd grocery-management-system`
+
+4. Install Homebrew if on Mac:
 
 `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
 
@@ -33,6 +34,8 @@
 
 `python3 -m venv venv`
 
+`.\venv\Scripts\activate` <- On Windows
+
 `source venv/bin/activate`  <- On Mac/Linux 
 
 2. Install required Python packages:
@@ -41,7 +44,9 @@
 
 3. Run the application:
 
-`flask run`
+`python app.py` <- On Windows
+
+`flask run` <- on Mac/Linux
 
 4. Navigate to local site:
 - Congratulations. The management system should be running at http://127.0.0.1:5000/static/index.html
