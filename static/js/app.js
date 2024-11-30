@@ -27,6 +27,20 @@ async function fetchProducts() {
   `).join('');
 }
 
+async function fetchOrders() {
+  try {
+    const response = await fetch(`${API_URL}/orders`);
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
+    }
+    const orders = await response.json();
+    displayOrders(orders);
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    document.getElementById('order-list').innerHTML = '<p>Error loading orders.</p>';
+  }
+}
+
 async function deleteProduct(productId) {
   if (!confirm('Are you sure you want to delete this product?')) {
     return; // Exit if the user cancels the confirmation
