@@ -70,18 +70,35 @@ def delete_product(product_id):
     cursor = conn.cursor()
 
     try:
-        # Delete the product from the products table
+        # Debug: Log product_id being deleted
+        print(f"Attempting to delete product with ID: {product_id}")
+
+        # Delete associated rows in related tables (if applicable)
+        cursor.execute("DELETE FROM inventory WHERE product_id = %s", (product_id,))
+        print("Deleted from inventory")
+
+        cursor.execute("DELETE FROM cart WHERE product_id = %s", (product_id,))
+        print("Deleted from cart")
+
+        # Delete the product
         cursor.execute("DELETE FROM products WHERE id = %s", (product_id,))
+        print("Deleted from products")
+
         conn.commit()
 
         if cursor.rowcount == 0:
+            print("Product not found")
             return jsonify({"error": "Product not found"}), 404
 
+    except Exception as e:
+        print(f"Error while deleting product: {e}")  # Debug the error
+        return jsonify({"error": str(e)}), 500
     finally:
         cursor.close()
         conn.close()
 
     return jsonify({"message": "Product deleted successfully"}), 200
+
 
 # View inventory
 @app.route('/api/inventory', methods=['GET'])

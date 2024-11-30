@@ -29,11 +29,11 @@ async function fetchProducts() {
 
 async function deleteProduct(productId) {
   if (!confirm('Are you sure you want to delete this product?')) {
-    return; // Exit if user cancels the confirmation
+    return; // Exit if the user cancels the confirmation
   }
 
   try {
-    const response = await fetch(`http://127.0.0.1:5000/api/products/${productId}`, {
+    const response = await fetch(`${API_URL}/products/${productId}`, {
       method: 'DELETE',
     });
 
@@ -44,7 +44,7 @@ async function deleteProduct(productId) {
     }
 
     alert('Product deleted successfully');
-    fetchProducts(); // Refresh the product list
+    fetchProducts(); // Refresh the product list after deletion
   } catch (error) {
     console.error('Error deleting product:', error);
   }
@@ -297,19 +297,28 @@ async function createOrder() {
 }
 
 // Fetch all orders
-async function fetchOrders() {
+async function fetchProducts() {
   try {
-    const response = await fetch(`${API_URL}/orders`);
-    if (!response.ok) {
-      throw new Error(`Error: ${response.statusText}`);
-    }
-    const orders = await response.json();
-    displayOrders(orders);
+    const response = await fetch(`${API_URL}/products`);
+    const products = await response.json();
+
+    const productList = document.getElementById('product-list');
+    productList.innerHTML = products.map(product => `
+      <div class="product">
+        <h4>${product.name} ($${parseFloat(product.price).toFixed(2)})</h4>
+        <p>${product.description}</p>
+        <label for="quantity-${product.id}">Quantity:</label>
+        <input type="number" id="quantity-${product.id}" value="1" min="1">
+        <button onclick="addToCart(${product.id})">Add to Cart</button>
+        <button onclick="deleteProduct(${product.id})">Delete</button> <!-- Add this line -->
+      </div>
+    `).join('');
   } catch (error) {
-    console.error('Error fetching orders:', error);
-    document.getElementById('order-list').innerHTML = '<p>Error loading orders.</p>';
+    console.error('Error fetching products:', error);
+    document.getElementById('product-list').innerHTML = '<p>Error loading products.</p>';
   }
 }
+
 
 
 // Fetch orders for the selected customer
