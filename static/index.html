@@ -4,81 +4,101 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Grocery Management System</title>
+  <!-- Link to the external CSS file for styling -->
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+  <!-- Page header section -->
   <header>
-    <h1>Grocery Management System</h1>
+    <h1>Grocery Management System</h1> <!-- Main title of the page -->
   </header>
 
+  <!-- Navigation bar for switching between sections -->
   <nav>
+    <!-- Each link activates a specific section and triggers corresponding JavaScript functions -->
     <a href="#customers" onclick="setActive(this); fetchCustomers()">Customers</a> 
     <a href="#products" onclick="setActive(this); fetchProducts()">Products</a>
     <a href="#inventory" onclick="setActive(this); fetchInventory()">Inventory</a>
     <a href="#cart" onclick="setActive(this); updateCart()">Cart</a>
     <a href="#orders" onclick="setActive(this); fetchOrders()">Orders</a>
-</nav>
+  </nav>
 
-
+  <!-- Main content of the page -->
   <main>
 
+    <!-- Section to select a customer -->
     <section id="customer-select">
       <h2>Select Customer</h2>
+      <!-- Dropdown for dynamically populated customer list -->
       <label for="customerId">Customer:</label>
       <select id="customerId">
-        <!-- Options will be dynamically populated -->
+        <!-- Options will be dynamically populated using JavaScript -->
       </select>
     </section>
 
+    <!-- Section to add new customers -->
     <section id="customers">
       <h2>Add Customer</h2>
+      <!-- Form for adding customer details -->
       <form id="customerForm">
-        <input type="text" id="customerName" placeholder="Name" required>
-        <input type="email" id="customerEmail" placeholder="Email" required>
-        <textarea id="customerAddress" placeholder="Address"></textarea>
-        <button type="submit">Add Customer</button>
+        <input type="text" id="customerName" placeholder="Name" required> <!-- Input for customer name -->
+        <input type="email" id="customerEmail" placeholder="Email" required> <!-- Input for customer email -->
+        <textarea id="customerAddress" placeholder="Address"></textarea> <!-- Input for customer address -->
+        <button type="submit">Add Customer</button> <!-- Submit button -->
       </form>      
     </section>
 
+    <!-- Section to manage existing customers -->
     <section id="customer-management">
       <h2>Manage Customers</h2>
+      <!-- Dynamic list of customers populated using JavaScript -->
       <div id="customer-list"></div>
     </section>
 
+    <!-- Section to view and add products -->
     <section id="products">
       <h2>Products</h2>
+      <!-- Dynamic list of products populated using JavaScript -->
       <div id="product-list"></div>
       <h3>Add Product</h3>
+      <!-- Form for adding new products -->
       <form id="productForm">
-        <input type="text" id="productName" placeholder="Product Name" required>
-        <input type="number" id="productPrice" placeholder="Price" step="0.01" required>
-        <textarea id="productDescription" placeholder="Description"></textarea>
-        <button type="submit">Add Product</button>
+        <input type="text" id="productName" placeholder="Product Name" required> <!-- Input for product name -->
+        <input type="number" id="productPrice" placeholder="Price" step="0.01" required> <!-- Input for product price -->
+        <textarea id="productDescription" placeholder="Description"></textarea> <!-- Input for product description -->
+        <button type="submit">Add Product</button> <!-- Submit button -->
       </form>      
-      </form>
     </section>
 
+    <!-- Section to manage inventory -->
     <section id="inventory">
       <h2>Inventory</h2>
+      <!-- Dynamic list of inventory items populated using JavaScript -->
       <div id="inventory-list"></div>
     </section>
     
+    <!-- Section to manage the shopping cart -->
     <section id="cart">
       <h2>Cart</h2>
+      <!-- Dynamic list of cart items populated using JavaScript -->
       <div id="cart-list"></div>
-      <button id="create-order" onclick="createOrder()">Create Order</button>
+      <button id="create-order" onclick="createOrder()">Create Order</button> <!-- Button to create an order -->
     </section>
     
+    <!-- Section to view and manage orders -->
     <section id="orders">
       <h2>Orders</h2>
+      <!-- Button to view all orders -->
       <button onclick="fetchOrders()">View All Orders</button>
+      <!-- Button to view orders for the selected customer -->
       <button onclick="fetchOrdersForCustomer()">View Selected Customer's Orders</button>
+      <!-- Dynamic list of orders populated using JavaScript -->
       <div id="order-list"></div>
     </section>
       
-    
   </main>
 
+  <!-- Link to the JavaScript file -->
   <script src="js/app.js"></script>
 </body>
 </html>
