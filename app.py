@@ -12,7 +12,7 @@ def get_db_connection():
         host="localhost",
         user="root",  # Replace with your MySQL username
         password="Mazatlan1!",  # Replace with your MySQL password
-        database="grocery_db"  # Replace with your database name
+        database="test_db"  # Replace with your database name
     )
 
 # View all products
@@ -37,67 +37,65 @@ def add_product():
         return jsonify({"error": "Missing required fields"}), 400
 
     try:
-        price = float(price)  # Convert price to float
-        if price < 0:
-            return jsonify({"error": "Price must be a positive number"}), 400
-    except ValueError:
-        return jsonify({"error": "Invalid price format"}), 400
+        conn = get_db_connection()
+        cursor = conn.cursor()
 
-    conn = get_db_connection()
-    cursor = conn.cursor()
+        # Insert the product into the database
+        cursor.execute(
+            "INSERT INTO products (name, price, description) VALUES (%s, %s, %s)",
+            (name, price, description)
+        )
+        product_id = cursor.lastrowid
 
-    cursor.execute(
-        "INSERT INTO products (name, price, description) VALUES (%s, %s, %s)",
-        (name, price, description)
-    )
-    product_id = cursor.lastrowid
+        # Initialize the stock level for the new product in the inventory table
+        cursor.execute(
+            "INSERT INTO inventory (product_id, stock_level) VALUES (%s, %s)",
+            (product_id, 0)  # Default stock level is 0
+        )
+        conn.commit()
+        return jsonify({"message": "Product added successfully", "product_id": product_id}), 201
 
-    # Initialize the stock level for the new product in the inventory table
-    cursor.execute(
-        "INSERT INTO inventory (product_id, stock_level) VALUES (%s, %s)",
-        (product_id, 0)  # Default stock level is 0
-    )
+    except pymysql.err.IntegrityError as e:
+        # Handle duplicate product name gracefully
+        conn.rollback()
+        if "Duplicate entry" in str(e):
+            return jsonify({"error": f"Product name '{name}' already exists"}), 409
+        else:
+            raise e  # Re-raise unexpected errors
 
-    conn.commit()
-    cursor.close()
-    conn.close()
+    finally:
+        # Ensure cursor and connection are closed in all cases
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
 
-    return jsonify({"message": "Product added successfully", "product_id": product_id}), 201
 
 @app.route('/api/products/<int:product_id>', methods=['DELETE'])
 def delete_product(product_id):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
     try:
-        # Debug: Log product_id being deleted
-        print(f"Attempting to delete product with ID: {product_id}")
+        conn = get_db_connection()
+        cursor = conn.cursor()
 
-        # Delete associated rows in related tables (if applicable)
-        cursor.execute("DELETE FROM inventory WHERE product_id = %s", (product_id,))
-        print("Deleted from inventory")
-
-        cursor.execute("DELETE FROM cart WHERE product_id = %s", (product_id,))
-        print("Deleted from cart")
-
-        # Delete the product
+        # Delete the product from the database
         cursor.execute("DELETE FROM products WHERE id = %s", (product_id,))
-        print("Deleted from products")
-
         conn.commit()
 
         if cursor.rowcount == 0:
-            print("Product not found")
             return jsonify({"error": "Product not found"}), 404
 
-    except Exception as e:
-        print(f"Error while deleting product: {e}")  # Debug the error
-        return jsonify({"error": str(e)}), 500
-    finally:
-        cursor.close()
-        conn.close()
+        return jsonify({"message": "Product deleted successfully"}), 200
 
-    return jsonify({"message": "Product deleted successfully"}), 200
+    except Exception as e:
+        conn.rollback()  # Rollback changes in case of an error
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
+
 
 
 # View inventory
