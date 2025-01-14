@@ -1,5 +1,7 @@
 # grocery-management-system
 
+A presentation overview of this project can be viewed here: https://docs.google.com/presentation/d/10qPw42LIH1QKd05VGez1E372Js-vbSDyBqp8IJew4p4/edit?usp=sharing
+
 ### Install VS Code, clone project, and install tools:
 1. Download and install VS Code.
 2. Open the VS Code terminal (View > Terminal)
